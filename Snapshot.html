@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="snap">拍攝</button>
+    <div style="display: none;">
+        <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+
+    <!--顯示截圖後的圖片，若不需要顯示就不用img-->
+    <img src="" alt="" id="img">
+
+    <script>
+        // 用來播放相機畫面的地方
+        var video = document.getElementById('video');
+
+        // 用來存放截圖的地方
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
+
+        // 取得權限
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // 取得畫面後於video呈現畫面
+            navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
+                //video.src = window.URL.createObjectURL(stream);
+                video.srcObject = stream;
+                video.play();
+            });
+        }
+
+        // 按下拍攝按鈕後截圖
+        document.getElementById("snap").addEventListener("click", function () {
+            //取得圖片data url
+            var url = "";
+
+            //加文字
+            url = watermarkedDataURL("OH YEAH~");
+
+            // 顯示截圖後的圖片，若不需要顯示就不用
+            document.getElementById("img").src = url;
+
+            //TODO 將url用AJAX回傳
+            //後端將url 存起來
+            //https://stackoverflow.com/questions/27710576/convert-from-a-dataurl-to-an-image-in-c-sharp-and-write-a-file-with-the-bytes
+        });
+
+
+        //右下角加上浮水印
+        // text: 在右下角加上文字浮水印
+        // imgUrl: 以圖片url加上浮水印
+        function watermarkedDataURL(text, imgUrl) {
+
+            //清空畫布
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.globalAlpha = 1;
+
+            //先畫上截圖
+            context.drawImage(video, 0, 0);
+
+            //設定文字樣式
+            context.font = "24px verdana";
+            context.fillStyle = 'blue';
+
+            //文字透明度
+            context.globalAlpha = .50;
+
+            //取得文字大小
+            var textWidth = context.measureText(text).width;
+
+            //將文字畫在右下角
+            context.fillText(text, canvas.width - textWidth - 10, canvas.height - 10);
+
+            //回傳dataUrl
+            return (canvas.toDataURL());
+        }
+    </script>
+</body>
+
+</html>
