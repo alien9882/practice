@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,  maximum-scale=1">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+
+    <!-- <link rel="stylesheet" href="./js/tt.css">
+    <link rel="stylesheet" href="./js/AdminLTE.min.css"> -->
+    <script src="./js/jquery-1.9.1.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="./css/style.css" />
+</head>
+
+<body>
+    <!--第一頁清單-->
+    <div class="container-fluid" id="divList">
+        <div class="row">
+            <div class="">
+                <div style="background:#51ABC5">
+                    <span style="color:white;font-size:30px;">EPS#A123456-廠商款</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="">
+                <table class="table" id="tblList">
+                    <tbody data-bind="foreach: itemList">
+                        <tr>
+                            <td data-bind="text: $index()+1"></td>
+                            <td data-bind="text: text"></td>
+                            <td>
+                                <span data-bind="text:count" class="fileCount"></span>
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-camera"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!--拍照-->
+
+    <div id="camUI">
+        <div id="gui_close">
+            <button class="btn btn btn-danger" onclick="closeCamera();">Close</button>
+        </div>
+        <div id="vid_container">
+            <video id="video" autoplay playsinline></video>
+            <div class="watermark">
+                <div class="watermark_container">
+                    <label>工號:123456789</label>
+                    <br>
+                    <label>姓名:987654321</label>
+                </div>
+
+            </div>
+            <div id="video_overlay"></div>
+        </div>
+        <div id="gui_controls">
+            <button id="switchCameraButton" name="switch Camera" type="button" aria-pressed="false"></button>
+            <button id="takePhotoButton" name="take Photo" type="button"></button>
+            <button id="toggleFullScreenButton" name="toggle FullScreen" type="button" aria-pressed="false"></button>
+        </div>
+    </div>
+
+    <script src="js/adapter.min.js"></script>
+    <script src="js/screenfull.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/knockout-3.5.1.js"></script>
+    <script>
+        var pageViewModel = {
+            itemList: [
+                { text: '印刷費用請款', count: 100 },
+                { text: '實驗線材購買', count: 2 },
+                { text: '辦公室燈具', count: 3 },
+                { text: '黃光燈具更換', count: 20 },
+            ]
+        };
+
+        ko.applyBindings(pageViewModel, $("#divList")[0]);
+
+        $("#tblList").on("click", ".glyphicon-camera", function () {
+            $('#camUI').show();
+
+        });
+
+        var camera = new CameraPlugin({
+            captureCallback: function (imgData) {
+                //拍照後要幹嘛
+                console.log(imgData);
+            },
+        });
+
+        function closeCamera() {
+            $('#camUI').hide();
+        }
+    </script>
+</body>
+
+</html>
